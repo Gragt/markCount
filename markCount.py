@@ -81,8 +81,7 @@ def writeResults():
     """
     wb = openpyxl.load_workbook("marks.xlsx")
     sheet = wb.active
-    info = getBasics(sheet)
-    answers = getAnswers(sheet)
+    info, answers = getData(sheet)
     answerKey = getAnswerKey()
     checkedAnswers = checkAnswers(answers, answerKey)
 
@@ -91,13 +90,13 @@ def writeResults():
     values = ("First Name", "Last Name", "Email", "Section 1", "Section 2",
               "Section 3", "Section 4", "Section 5", "Section 6", "Old score",
               "New score")
-    for column in range(1, len(values) + 1):
-        sheet.cell(row=1, column=column).value = values[column - 1]
-    for row in range(len(info)):
-        sheet.cell(row=row + 2, column=1).value = info[row][2]
-        sheet.cell(row=row + 2, column=2).value = info[row][3]
-        sheet.cell(row=row + 2, column=3).value = info[row][0]
-        sheet.cell(row=row + 2, column=10).value = info[row][1]
+    for colNum in range(len(values)):
+        sheet.cell(row=1, column=colNum + 1).value = values[colNum]
+    for rowNum in range(len(info)):
+        sheet.cell(row=rowNum + 2, column=1).value = info[rowNum][0]
+        sheet.cell(row=rowNum + 2, column=2).value = info[rowNum][1]
+        sheet.cell(row=rowNum + 2, column=3).value = info[rowNum][2]
+        sheet.cell(row=rowNum + 2, column=10).value = info[rowNum][3]
     for row in range(len(checkedAnswers)):
         for column in range(4, 10):
             sheet.cell(
