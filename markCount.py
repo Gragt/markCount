@@ -3,11 +3,11 @@ import openpyxl
 
 def getData(sheet):
     """
-    Extracts data from origin file, separating between students’ information
-    and exam answers. Returns it as tuples: one tuple per student, containing
-    a tuple with their information and another tuple with their answers.
+    Extracts data from origin file, parsing students’ information and exam
+    answers. Returns it as two tuples per student: one containing their
+    information, and another with their answers.
     Inputs: sheet, an Excel sheet object.
-    Returns: a tuple.
+    Returns: tuples of various data types.
     """
     info, answers = [], []
     for rowNum in range(2, sheet.max_row + 1):
@@ -44,14 +44,18 @@ def getAnswerKey():
 
 def checkAnswers(answers, answerKey):
     """
-    Checks answers.
-    Inputs answers: a list of lists of strings.
+    Checks students’ answers against answer key and returns a tuple of scores
+    per student.
+    Inputs: answers, a tuple of tuples of strings.
+            answerKey, a tuple of strings.
     Returns: a tuple of tuples of integers.
     """
     def checkSection(current, start, end):
         """
         Check answers in a section.
-        Inputs: current, a list of strings; start, an integer; end, an integer.
+        Inputs: current, a list of strings.
+                start, an integer.
+                end, an integer.
         Returns: an integer.
         """
         counter = 0
@@ -76,7 +80,7 @@ def checkAnswers(answers, answerKey):
 
 def writeResults():
     """
-    Write results to a new file.
+    Write results per section to a new Excel file.
     Returns: nothing.
     """
     wb = openpyxl.load_workbook("marks.xlsx")
