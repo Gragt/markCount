@@ -1,38 +1,32 @@
 import openpyxl
 
 
-def getBasics(sheet):
+def getData(sheet):
     """
-    Gets basic information from file.
-    Inputs: sheet, a sheet object.
-    Returns: a tuple of tuples of strings.
+    Extracts data from origin file, separating between students’ information
+    and exam answers. Returns it as tuples: one tuple per student, containing
+    a tuple with their information and another tuple with their answers.
+    Inputs: sheet, an Excel sheet object.
+    Returns: a tuple.
     """
-    info = [
-        tuple([
-            sheet.cell(row=row, column=column).value for column in range(2, 6)
-        ])
-        for row in range(2, sheet.max_row + 1)
-    ]
-    return tuple(info)
-
-
-def getAnswers(sheet):
-    """
-    Get answers from file.
-    Inputs: sheet, a sheet object.
-    Returns: a tuple of tuples of strings.
-    """
-    answers = []
-    for row in range(2, sheet.max_row + 1):
-        temp = []
-        for column in range(7, 78):
-            content = sheet.cell(row=row, column=column).value
+    info, answers = [], []
+    for rowNum in range(2, sheet.max_row + 1):
+        infoTemp, answersTemp = [], []
+        for colNum in range(2, 6):
+            infoTemp.append(sheet.cell(row=rowNum, column=colNum).value)
+        for i in range(4, 6):
+            infoTemp.insert(4, infoTemp[0])
+            del infoTemp[0]
+        info.append(tuple(infoTemp))
+        for colNum in range(7, 78):
+            content = sheet.cell(row=rowNum, column=colNum).value
+            # Countermeasure for error in exam. Remove block if exam is fixed.
             try:
-                temp.append(None if "," in content else content[0])
+                answersTemp.append(content[0] if "," not in content else None)
             except TypeError:
-                temp.append(None)
-        answers.append(tuple(temp))
-    return tuple(answers)
+                answersTemp.append(None)
+        answers.append(tuple(answersTemp))
+    return tuple(info), tuple(answers)
 
 
 def getAnswerKey():
