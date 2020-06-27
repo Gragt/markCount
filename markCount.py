@@ -83,7 +83,7 @@ def writeResults():
     sheet = wb.active
     info, answers = getData(sheet)
     answerKey = getAnswerKey()
-    checkedAnswers = checkAnswers(answers, answerKey)
+    sections = checkAnswers(answers, answerKey)
 
     wb = openpyxl.Workbook()
     sheet = wb.active
@@ -92,17 +92,17 @@ def writeResults():
               "New score")
     for colNum in range(len(values)):
         sheet.cell(row=1, column=colNum + 1).value = values[colNum]
-    for rowNum in range(len(info)):
-        sheet.cell(row=rowNum + 2, column=1).value = info[rowNum][0]
-        sheet.cell(row=rowNum + 2, column=2).value = info[rowNum][1]
-        sheet.cell(row=rowNum + 2, column=3).value = info[rowNum][2]
-        sheet.cell(row=rowNum + 2, column=10).value = info[rowNum][3]
-    for row in range(len(checkedAnswers)):
-        for column in range(4, 10):
+    for rowNum in range(2, len(info) + 2):
+        for colNum in range(1, 4):
             sheet.cell(
-                row=row + 2, column=column
-            ).value = checkedAnswers[row][column - 4]
-        sheet.cell(row=row + 2, column=11).value = sum(checkedAnswers[row])
+                row=rowNum, column=colNum
+            ).value = info[rowNum - 2][colNum - 1]
+        for colNum in range(4, 10):
+            sheet.cell(
+                row=rowNum, column=colNum
+            ).value = sections[rowNum - 2][colNum - 4]
+        sheet.cell(row=rowNum, column=10).value = info[rowNum - 2][3]
+        sheet.cell(row=rowNum, column=11).value = sum(sections[rowNum - 2])
     wb.save("results.xlsx")
 
 
