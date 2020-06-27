@@ -1,5 +1,7 @@
 import openpyxl
 
+from answerKey import answerKey
+
 
 def getData(sheet):
     """
@@ -27,19 +29,6 @@ def getData(sheet):
                 answersTemp.append(None)
         answers.append(tuple(answersTemp))
     return tuple(info), tuple(answers)
-
-
-def getAnswerKey():
-    """
-    Extract answer key from file.
-    Returns: a tuple of strings.
-    """
-    wb = openpyxl.load_workbook("answerKey.xlsx")
-    sheet = wb.active
-    return tuple([
-        sheet.cell(row=row, column=3).value
-        for row in range(1, sheet.max_row + 1)
-    ])
 
 
 def checkAnswers(answers, answerKey):
@@ -86,7 +75,6 @@ def writeResults():
     wb = openpyxl.load_workbook("marks.xlsx")
     sheet = wb.active
     info, answers = getData(sheet)
-    answerKey = getAnswerKey()
     sections = checkAnswers(answers, answerKey)
 
     wb = openpyxl.Workbook()
