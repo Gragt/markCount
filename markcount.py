@@ -1,101 +1,109 @@
+"""
+Mark exam sections for each student and saves results in a file.
+
+Students’ information is parsed from the original file. Their answers
+are checked against the stored answers key, return the marks for each
+exam section. Information and results are then saved in results.xlsx.
+"""
+
 import openpyxl
 
-from answerKey import answerKey
+from answerkey import answer_key
 
 
-def getData(sheet):
+def get_data(sheet):
     """
-    Extracts data from origin file, parsing students’ information and exam
-    answers. Returns it as two tuples per student: one containing their
-    information, and another with their answers.
+    Parse information from origin file.
+
     Inputs: sheet, an Excel sheet object.
     Returns: tuples of various data types.
     """
     info, answers = [], []
-    for rowNum in range(2, sheet.max_row + 1):
-        infoTemp, answersTemp = [], []
-        for colNum in range(2, 6):
-            infoTemp.append(sheet.cell(row=rowNum, column=colNum).value)
+    for rownum in range(2, sheet.max_row + 1):
+        temp1, temp2 = [], []
+        for colnum in range(2, 6):
+            temp1.append(sheet.cell(row=rownum, column=colnum).value)
         for i in range(4, 6):
-            infoTemp.insert(4, infoTemp[0])
-            del infoTemp[0]
-        info.append(tuple(infoTemp))
-        for colNum in range(7, 78):
-            content = sheet.cell(row=rowNum, column=colNum).value
-            # Countermeasure for error in exam. Remove block if exam is fixed.
+            temp1.insert(4, temp1[0])
+            del temp1[0]
+        info.append(tuple(temp1))
+        for colnum in range(7, 78):
+            content = sheet.cell(row=rownum, column=colnum).value
+            # Countermeasure for error in exam. Remove block if fixed.
             try:
-                answersTemp.append(content[0] if "," not in content else None)
+                temp2.append(content[0] if "," not in content else None)
             except TypeError:
-                answersTemp.append(None)
-        answers.append(tuple(answersTemp))
+                temp2.append(None)
+        answers.append(tuple(temp2))
     return tuple(info), tuple(answers)
 
 
-def checkAnswers(answers, answerKey):
+def check_answers(answers, answer_key):
     """
-    Checks students’ answers against answer key and returns a tuple of scores
-    per student.
-    Inputs: answers, a tuple of tuples of strings.
-            answerKey, a tuple of strings.
-    Returns: a tuple of tuples of integers.
+    Check students’ answers against answer key.
+
+    Inputs: answers, a tuple of tuples of strs.
+            answer_key, a tuple of strs.
+    Returns: tuple of tuples of ints.
     """
-    def checkSection(current, start, end):
+
+    def check_section(current, start, end):
         """
-        Check answers in a section.
-        Inputs: current, a list of strings.
-                start, an integer.
-                end, an integer.
-        Returns: an integer.
+        Mark answers in a section.
+
+        Inputs: current, a list of strs.
+                start, an int.
+                end, an int.
+        Returns: an int.
         """
         counter = 0
         for i in range(start, end):
-            if current[i] == answerKey[i]:
+            if current[i] == answer_key[i]:
                 counter += 1
         return counter
 
     final = []
     for elem in answers:
         results = [
-            checkSection(elem, 0, 12),
-            checkSection(elem, 12, 24),
-            checkSection(elem, 24, 36),
-            checkSection(elem, 36, 47),
-            checkSection(elem, 47, 57),
-            checkSection(elem, 57, 71)
+            check_section(elem, 0, 12),
+            check_section(elem, 12, 24),
+            check_section(elem, 24, 36),
+            check_section(elem, 36, 47),
+            check_section(elem, 47, 57),
+            check_section(elem, 57, 71),
         ]
         final.append(tuple(results))
     return tuple(final)
 
 
-def writeResults():
-    """
-    Write results per section to a new Excel file.
-    Returns: nothing.
-    """
+def write_results():
+    """Write collected information to a new Excel file."""
     wb = openpyxl.load_workbook("marks.xlsx")
     sheet = wb.active
-    info, answers = getData(sheet)
-    sections = checkAnswers(answers, answerKey)
+    info, answers = get_data(sheet)
+    sections = check_answers(answers, answer_key)
 
     wb = openpyxl.Workbook()
     sheet = wb.active
     values = ("First Name", "Last Name", "Email", "Section 1", "Section 2",
               "Section 3", "Section 4", "Section 5", "Section 6", "Old score",
               "New score")
-    for colNum in range(len(values)):
-        sheet.cell(row=1, column=colNum + 1).value = values[colNum]
-    for rowNum in range(2, len(info) + 2):
-        for colNum in range(1, 4):
+    for colnum in range(len(values)):
+        sheet.cell(row=1, column=colnum + 1).value = values[colnum]
+    for rownum in range(2, len(info) + 2):
+        for colnum in range(1, 4):
             sheet.cell(
-                row=rowNum, column=colNum
-            ).value = info[rowNum - 2][colNum - 1]
-        for colNum in range(4, 10):
+                row=rownum,
+                column=colnum,
+            ).value = info[rownum - 2][colnum - 1]
+        for colnum in range(4, 10):
             sheet.cell(
-                row=rowNum, column=colNum
-            ).value = sections[rowNum - 2][colNum - 4]
-        sheet.cell(row=rowNum, column=10).value = info[rowNum - 2][3]
-        sheet.cell(row=rowNum, column=11).value = sum(sections[rowNum - 2])
+                row=rownum,
+                column=colnum,
+            ).value = sections[rownum - 2][colnum - 4]
+        sheet.cell(row=rownum, column=10).value = info[rownum - 2][3]
+        sheet.cell(row=rownum, column=11).value = sum(sections[rownum - 2])
     wb.save("results.xlsx")
 
 
-writeResults()
+write_results()

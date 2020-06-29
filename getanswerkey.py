@@ -1,9 +1,12 @@
+"""Scrape Excel file for answer key and saves it in another file."""
+
 import openpyxl
 
 
-def getAnswerKey():
+def get_answer_key():
     """
     Extract answer key from file.
+
     Returns: a tuple of strings.
     """
     wb = openpyxl.load_workbook("answerKey.xlsx")
@@ -14,14 +17,11 @@ def getAnswerKey():
     ])
 
 
-def writeAnswerKey():
-    """
-    Write answer key to a file.
-    Returns: nothing
-    """
-    file = open("answerKey.py", "w")
-    file.write(f"answerKey = {getAnswerKey()}")
+def write_answer_key():
+    """Write answer key to file."""
+    file = open("answerkey.py", "w")
+    file.write(f"answer_key = {get_answer_key()}")
     file.close()
 
 
-writeAnswerKey()
+write_answer_key()
