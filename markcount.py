@@ -8,8 +8,6 @@ exam section. Information and results are then saved in results.xlsx.
 
 import openpyxl
 
-from answerkey import answer_key
-
 
 def get_data(file):
     """
@@ -38,6 +36,20 @@ def get_data(file):
                 temp2.append(None)
         answers.append(tuple(temp2))
     return tuple(info), tuple(answers)
+
+
+def get_answer_key():
+    """
+    Extract answer key from file.
+
+    Returns: a tuple of strings.
+    """
+    wb = openpyxl.load_workbook("answerKey.xlsx")
+    sheet = wb.active
+    return tuple([
+        sheet.cell(row=row, column=3).value
+        for row in range(1, sheet.max_row + 1)
+    ])
 
 
 def check_answers(answers, answer_key):
@@ -81,7 +93,7 @@ def check_answers(answers, answer_key):
 def write_results():
     """Write collected information to a new Excel file."""
     info, answers = get_data("marks.xlsx")
-    sections = check_answers(answers, answer_key)
+    sections = check_answers(answers, get_answer_key())
 
     wb = openpyxl.Workbook()
     sheet = wb.active
