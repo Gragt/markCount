@@ -19,9 +19,8 @@ def get_answer_key():
 
 def write_answer_key():
     """Write answer key to file."""
-    file = open("answerkey.py", "w")
-    file.write(f"answer_key = {get_answer_key()}")
-    file.close()
+    with open("answerkey.py", "w") as file:
+        file.write(f"answer_key = {get_answer_key()}")
 
 
 write_answer_key()
