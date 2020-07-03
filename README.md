@@ -1,15 +1,12 @@
 # markcount
 
-Mark exam sections for each student and saves results in a file.
+Mark exam sections for each student and save results in a file.
 
 This program is specifically tailored for IdC’s placement test.
 
 ## What does it do?
 
-This program consists of two main files:
-
-* `getanswerkey.py`: use it to generate an answer key file to use with the second program. Answer key should be provided as `answerKey.xlsx`. It creates `answerkey.py`, containing a Python variable.
-* `markcount.py`: the main program that counts students’ marks and tallies them. Parses information from `marks.xlsx` and `answerkey.py` and outputs the results in `results.py`.
+`markcount.py` parses information from `marks.xlsx` and `answerKey.xlsx`, counts students’ marks, compares them against the answer key, tallies them, and outputs the results in `results.xlsx`.
 
 ## How to use it
 
@@ -24,14 +21,11 @@ pip --version
 
 Depending on your machine, e.g., macOS, it might be necessary to replace `python` by `python3` and `pip` by `pip3`.
 
-This program relies on Python 3, not Python 2.
-
 ### Required files
 
 Make sure to place all relevant files in the same folder:
 
 * `markcount.py`
-* `getanswerkey.py`
 * `answerKey.xlsx`
 * `marks.xlsx`
 
@@ -50,14 +44,10 @@ Install `openpyxl` globally by running `pip install openpyxl`. Again, it might b
 
 ### Running the program
 
-1. Generate the answer key:
-
-```
-python getanswerkey.py
-```
-
-2. Generate the results file:
-
 ```
 python markcount.py
 ```
+
+## Possible updates
+
+This program currently works for only one type of placement test. It is possible to update it so it could work for other types with a different number of sections.
