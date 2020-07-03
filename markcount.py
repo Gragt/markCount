@@ -11,13 +11,15 @@ import openpyxl
 from answerkey import answer_key
 
 
-def get_data(sheet):
+def get_data(file):
     """
     Parse information from origin file.
 
     Inputs: sheet, an Excel sheet object.
     Returns: tuples of various data types.
     """
+    wb = openpyxl.load_workbook(file)
+    sheet = wb.active
     info, answers = [], []
     for rownum in range(2, sheet.max_row + 1):
         temp1, temp2 = [], []
@@ -78,9 +80,7 @@ def check_answers(answers, answer_key):
 
 def write_results():
     """Write collected information to a new Excel file."""
-    wb = openpyxl.load_workbook("marks.xlsx")
-    sheet = wb.active
-    info, answers = get_data(sheet)
+    info, answers = get_data("marks.xlsx")
     sections = check_answers(answers, answer_key)
 
     wb = openpyxl.Workbook()
